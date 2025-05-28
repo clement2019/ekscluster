@@ -3,7 +3,7 @@ provider "aws" {
 }
 
 resource "aws_s3_bucket" "terraform_state" {
-  bucket = "demo-terraform-eks-state-s3-bucket" # Use globally unique name for your bucket
+  bucket = "bankapp-terraform-eks-state-s3-bucket" # Use globally unique name for your bucket
 
   lifecycle {
     prevent_destroy = false
