@@ -26,8 +26,9 @@ If correctly configured, you should see your AWS **Account ID, User ID, and ARN*
 
 **📌 Step 3: Initialize Terraform Backend (S3 & DynamoDB)**
 Before running Terraform commands, make sure **Backend/main.tf** file correctly sets up the remote backend (S3 & DynamoDB for state locking).
+**Alternatively you can equally set up or create the dynamoDb table using the command below**
 
-👉 Ensure you have a **DynamoDB table** named `terraform-eks-state-locks` for state locking. If not, create it:
+👉  **DynamoDB table** named `terraform-eks-state-locks` for state locking. If not, create it:
 
 ```bash
 aws dynamodb create-table \
@@ -45,6 +46,11 @@ terraform init
 ```
 🚀 This will connect your Terraform setup to the **remote state stored in S3**.
 
+**Now create the S3 bucket and DynamoDb within the Terraform Backend** run this command below:
+```bash
+terraform validate
+terraform apply --auto-approve
+```
 **📌 Step 4: Initialize Main Terraform Configuration**
 Next, initialize the Terraform config in **root directory** where `main.tf` is located.
 
@@ -82,7 +88,7 @@ terraform apply -auto-approve
 Once Terraform completes, verify that the cluster is created:
 
 ```bash
-aws eks list-clusters --region us-east-1
+aws eks list-clusters --region eu-west-2
 ```
 or
 ```bash
@@ -95,7 +101,7 @@ You should see your **EKS Cluster ID** and other outputs.
 To use `kubectl` with your EKS cluster, update your kubeconfig:
 
 ```bash
-aws eks update-kubeconfig --name YOUR_CLUSTER_NAME --region us-east-1
+aws eks update-kubeconfig --name YOUR_CLUSTER_NAME --region eu-west-2
 ```
 Test connectivity:
 ```bash
@@ -116,4 +122,12 @@ If everything is set up correctly, you’ll see your cluster nodes.
 8. **Verify EKS Cluster**.
 9. **Configure kubectl for EKS**.
 
-Happy Learning......
+**📌 Step 10: Cleaup Respources deployed**
+
+This will destroy all the resources created **VPC, Subnets, Security Groups and EKS Cluster**.
+
+**Now destroy the S3 bucket and DynamoDb within the Terraform Backend** run this command below:
+```bash
+cd EKS-Cluster/Backend
+terraform destroy --auto-approve
+```
