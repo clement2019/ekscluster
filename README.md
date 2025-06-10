@@ -1,3 +1,33 @@
+### creating the jenkins server
+Yoi have to first provisioned an ec2 instance that will house the jenkins server using terraform (IAc code)
+
+![Image](https://github.com/user-attachments/assets/6c4ab5bd-57b9-4038-84e1-220ae9de50b0)
+
+### below find the aws dashboard shoing the jenkins server created using terraform
+
+![Image](https://github.com/user-attachments/assets/7ec4b6cc-93e7-4af3-ac4a-9eca60b492ad)
+
+### shown below is the entry of the creaentioals jenkins dashbaord
+
+![Image](https://github.com/user-attachments/assets/1a7618d7-bc21-456c-95df-d4e08527f8e5)
+
+
+![Image](https://github.com/user-attachments/assets/75e3a6dd-9317-4634-9917-232bc42cf4c3)
+
+
+![Image](https://github.com/user-attachments/assets/ef22ad8b-f888-45cc-8ef6-c089c1395a31)
+
+### entering the accesskey and secret key in manage jenkins
+
+![Image](https://github.com/user-attachments/assets/1e139a24-e145-4b95-9298-0aba4b24d3ce)
+
+
+
+### Automating the process of cluster creattion using jenkins pipeline but firs configure that access key and secret on jenkins manage jenkins as seen below
+
+![Image](https://github.com/user-attachments/assets/3efb5e4d-d2b5-4bc2-ae12-dceafcd8ab96)
+
+
 # EKS-Cluster
 Step-by-step guide to initializing EKS cluster using Terraform
 ---
