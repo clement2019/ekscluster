@@ -1,5 +1,51 @@
+
+### Project Introduction
+
+This is a ppejct that deployes an nginx webserver as the end product on the uisng terraform commnands ruuning in a jenkins pipeline. Initially, i had to provision the jenkins server using terraform (IAC) and within the script thta produces the jenkins software i inserted script to install terraform and aws cli
+
+Once jenkins is configured now using jenkins pipeline,to deply the nginx to aws cloud managed kubernetes cluster(aws-eks).
+
+
+
+### Project overview
+
+1.IAM User Setup: Create an IAM user on AWS with the necessary permissions to facilitate deployment and management activities.
+
+2.Infrastructure as Code (IaC): Use Terraform and AWS CLI to set up the Jenkins server (EC2 instance) on AWS.
+
+3.Installing Jenkins: Through the jenkins-script.sh install jenkins software and aws cli
+
+4.Jenkins Server Configuration: Through the manage jenkins menu, install and configure essential plugins and tools such as terraform
+
+5.Jenkins Pipelines: Create Jenkins pipelines for deploying nginx websers application to the EKS cluster.
+
+6.AWS CLI - installed on the jenkins server,enable you to interface with AWS infrastructure.
+
+8.AWS configure - to insert Access-key and Secret-key, including Region and json format.
+
+9.EKS Cluster Deployment: Utilize eksctl commands to create an Amazon EKS cluster, a managed Kubernetes service on AWS.
+
+
+#### Prerequisites:
+
+Before starting the project, ensure you have the following prerequisites:
+
+-An AWS account with the necessary permissions to create resources.
+
+-Terraform and AWS CLI installed on your local machine.
+
+-Basic familiarity with Kubernetes, terraform, Jenkins, and best DevOps principles.
+
+-Vscode - code editor installed locally on your machine.
+
+- GitHub - a repository for your project code
+
+https://github.com/clement2019/ekscluster.git
+
+
+
 ### creating the jenkins server
-Yoi have to first provisioned an ec2 instance that will house the jenkins server using terraform (IAc code)
+I have to first provisioned an ec2 instance that will house the jenkins server using terraform (IAc code)
 
 ![Image](https://github.com/user-attachments/assets/6c4ab5bd-57b9-4038-84e1-220ae9de50b0)
 
@@ -126,7 +172,6 @@ terraform output
 ```
 You should see your **EKS Cluster ID** and other outputs.
 
-
 **📌 Step 9: Configure kubectl for EKS**
 To use `kubectl` with your EKS cluster, update your kubeconfig:
 
@@ -152,7 +197,134 @@ If everything is set up correctly, you’ll see your cluster nodes.
 8. **Verify EKS Cluster**.
 9. **Configure kubectl for EKS**.
 
-**📌 Step 10: Cleaup Respources deployed**
+
+**📌 Step 10: Jenkinsfile pipeline**
+
+pipeline {
+    agent any
+    environment {
+        AWS_ACCESS_KEY_ID = credentials('AWS_ACCESS_KEY_ID')
+        AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')
+        AWS_DEFAULT_REGION = 'eu-west-2'
+    }
+    parameters {
+        
+        
+        choice choices: ['apply', 'destroy'], description: '''Choose your terraform action
+        ''', name: 'action'
+    }
+    stages{
+        stage('Checkout SCM'){
+            steps{
+                script{
+                    checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/dajari1/a.git']])
+                }
+            }
+        }
+        stage('Initializing backend'){
+            steps{
+                script{
+                    dir('backend'){
+                         sh 'terraform init'
+                         sh 'terraform fmt'
+                         sh 'terraform validate'
+                         sh 'terraform apply --auto-approve'
+                    }
+                }
+            }
+        }
+        stage('Initializing teraform'){
+            steps{
+                script{
+                    dir('terraform-files'){
+                         sh 'terraform init'
+                    }
+                }
+            }
+        }
+        stage('Validating Terraform'){
+            steps{
+                script{
+                    dir('terraform-files'){
+                         sh 'terraform validate'
+                    }
+                }
+            }
+        }
+        stage('Previewing the infrastructure'){
+            steps{
+
+                script{
+
+                    dir('terraform-files'){
+
+                        sh 'terraform plan'
+                    }
+                    input(message: "Approve?", ok: "proceed")
+                }
+            }
+        }
+
+        stage('Terraform Apply') {
+            steps {
+               /// withAWS(credentials: 'aws-key', region: 'us-east-1') { 
+                script {
+                    if (params.'action' == 'apply') {
+
+                        echo "You have chosen to ${params.'action'} the resources"
+                        dir('terraform-files'){
+                            sh 'terraform $action --auto-approve'
+                                
+                    
+                        }
+                    }
+                }
+        
+
+            }
+        }
+        stage('Deploypment into kubernetes cluster') {
+            steps {
+               /// withAWS(credentials: 'aws-key', region: 'us-east-1') { 
+                script {
+                    if (params.'action' == 'apply') {
+
+                        dir('manifests') {
+                            sh ('aws eks update-kubeconfig --name aws-eks-cluster --region eu-west-2')
+                            sh "kubectl get ns"
+                            sh "kubectl apply -f deployment.yaml"
+                            sh "kubectl apply -f service.yaml"
+                        }
+
+                       
+                    }
+                }
+        
+
+            }
+        }
+        stage('Terraform Destroy') {
+            steps {
+               /// withAWS(credentials: 'aws-key', region: 'us-east-1') { 
+                script {
+                    if (params.'action' == 'destroy') {
+
+                        echo "You have chosen to ${params.'action'} the resources"
+                        dir('terraform-files'){
+                            sh 'terraform $action --auto-approve'
+                        
+                        }
+                    }
+                }
+        
+
+            }
+        }
+    }
+}
+    
+
+**📌 Step 11: Cleaup Respources deployed**
 
 This will destroy all the resources created **VPC, Subnets, Security Groups and EKS Cluster**.
 

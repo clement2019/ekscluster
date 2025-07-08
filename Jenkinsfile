@@ -52,43 +52,73 @@ pipeline {
         }
         stage('Previewing the infrastructure'){
             steps{
+
                 script{
+
                     dir('terraform-files'){
-                         sh 'terraform plan'
+
+                        sh 'terraform plan'
                     }
                     input(message: "Approve?", ok: "proceed")
                 }
             }
         }
 
-        stage('Terraform Action') {
+        stage('Terraform Apply') {
             steps {
                /// withAWS(credentials: 'aws-key', region: 'us-east-1') { 
                 script {
-                    echo "You have chosen to ${params.'action'} the resources"
-                    dir('terraform-files'){
-                        script {
-                            if (params.'action' == 'apply') {
-                                sh 'terraform $action --auto-approve'
-                                dir('manifests') {
-                                    sh ('aws eks update-kubeconfig --name aws-eks-cluster --region eu-west-2')
-                                    sh "kubectl get ns"
-                                    sh "kubectl apply -f deployment.yaml"
-                                    sh "kubectl apply -f service.yaml"
-                                }
-                            } else if (params.'action' == 'destroy') {
-                                sh 'terraform $action --auto-approve'
-                            } else {
-                                error "Invalid value for Terraform-Action: ${params.'action'}"
-                            }
+                    if (params.'action' == 'apply') {
+
+                        echo "You have chosen to ${params.'action'} the resources"
+                        dir('terraform-files'){
+                            sh 'terraform $action --auto-approve'
+                                
+                    
                         }
                     }
                 }
-                }
-            }
-        }
         
 
-  }
+            }
+        }
+        stage('Deploypment into kubernetes cluster') {
+            steps {
+               /// withAWS(credentials: 'aws-key', region: 'us-east-1') { 
+                script {
+                    if (params.'action' == 'apply') {
+
+                        dir('manifests') {
+                            sh ('aws eks update-kubeconfig --name aws-eks-cluster --region eu-west-2')
+                            sh "kubectl get ns"
+                            sh "kubectl apply -f deployment.yaml"
+                            sh "kubectl apply -f service.yaml"
+                        }
+
+                       
+                    }
+                }
+        
+
+            }
+        }
+        stage('Terraform Destroy') {
+            steps {
+               /// withAWS(credentials: 'aws-key', region: 'us-east-1') { 
+                script {
+                    if (params.'action' == 'destroy') {
+
+                        echo "You have chosen to ${params.'action'} the resources"
+                        dir('terraform-files'){
+                            sh 'terraform $action --auto-approve'
+                        
+                        }
+                    }
+                }
+        
+
+            }
+        }
+    }
 }
     
