@@ -1,10 +1,9 @@
 
 ### Project Introduction
 
-This is a ppejct that deployes an nginx webserver as the end product on the uisng terraform commnands ruuning in a jenkins pipeline. Initially, i had to provision the jenkins server using terraform (IAC) and within the script thta produces the jenkins software i inserted script to install terraform and aws cli
+This is a project that deploys an nginx webserver as the end product using terraform commnands runing in a jenkins pipeline. The project is in two phases initially, i had to provision the jenkins server using terraform (IAC) and within the script that produces the jenkins software i inserted some scripts to install terraform and aws cli
 
-Once jenkins is configured now using jenkins pipeline,to deply the nginx to aws cloud managed kubernetes cluster(aws-eks).
-
+In the secoond phase once jenkins is configured now using jenkins pipeline,to run another terraform commands that will first create an aws eks cluster and chenge directory to the menifest folder to deploy the nginx to aws cloud managed kubernetes cluster(aws-eks).
 
 
 ### Project overview
