@@ -26,6 +26,7 @@ pipeline {
                 script{
                     dir('terraform-files'){
                          sh 'terraform init'
+                         sh 'terraform init -reconfigure'
                     }
                 }
             }
