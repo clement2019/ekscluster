@@ -9,8 +9,8 @@ terraform {
 
 
   backend "s3" {
-    bucket         = "bankapp-terraform-eks-state-s3-bucket-11"
-    key            = "keys/terraform.tfstate"
+    bucket         = "jenkins-terraform-aws"
+    key            = "terraform-keys/terraform.tfstate"
     region         = "eu-west-2"
     ##dynamodb_table = "terraform-eks-state-locks"
     ##encrypt        = true
