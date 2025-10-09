@@ -20,18 +20,7 @@ pipeline {
                 }
             }
         }
-        stage('Initializing backend'){
-            steps{
-                script{
-                    dir('backend'){
-                         sh 'terraform init'
-                         sh 'terraform fmt'
-                         sh 'terraform validate'
-                         sh 'terraform apply --auto-approve'
-                    }
-                }
-            }
-        }
+        
         stage('Initializing teraform'){
             steps{
                 script{
