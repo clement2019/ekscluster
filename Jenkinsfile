@@ -79,7 +79,8 @@ pipeline {
                     if (params.'action' == 'apply') {
 
                         dir('manifests') {
-                            sh ('aws eks update-kubeconfig --name aws-eks-cluster --region eu-west-2')
+                            sh 'aws eks describe-cluster --name my-eks-cluster1 --region eu-west-2'
+                            sh ('aws eks update-kubeconfig --name my-eks-cluster1 --region eu-west-2')
                             //sh "kubectl get ns"
                             sh "kubectl apply -f deployment.yaml"
                             sh "kubectl apply -f service.yaml"
