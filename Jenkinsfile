@@ -24,9 +24,9 @@ pipeline {
         stage('Initializing teraform'){
             steps{
                 script{
-                    dir('terraform-files'){
+                    dir('terraform'){
                          sh 'terraform init'
-                         sh 'terraform init -reconfigure'
+                        
                     }
                 }
             }
@@ -34,7 +34,7 @@ pipeline {
         stage('Validating Terraform'){
             steps{
                 script{
-                    dir('terraform-files'){
+                    dir('terraform'){
                          sh 'terraform validate'
                     }
                 }
@@ -45,7 +45,7 @@ pipeline {
 
                 script{
 
-                    dir('terraform-files'){
+                    dir('terraform'){
 
                         sh 'terraform plan'
                     }
