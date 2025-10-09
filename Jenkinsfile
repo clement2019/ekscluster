@@ -100,7 +100,7 @@ pipeline {
                     if (params.'action' == 'destroy') {
 
                         echo "You have chosen to ${params.'action'} the resources"
-                        dir('terraform-files'){
+                        dir('terraform'){
                             sh 'terraform $action --auto-approve'
                         
                         }
