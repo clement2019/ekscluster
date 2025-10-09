@@ -90,7 +90,7 @@ pipeline {
 
                         dir('manifests') {
                             sh ('aws eks update-kubeconfig --name aws-eks-cluster --region eu-west-2')
-                            sh "kubectl get ns"
+                            //sh "kubectl get ns"
                             sh "kubectl apply -f deployment.yaml"
                             sh "kubectl apply -f service.yaml"
                         }
