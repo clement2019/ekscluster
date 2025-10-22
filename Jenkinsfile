@@ -67,7 +67,7 @@ pipeline {
                             sh ('aws eks update-kubeconfig --name my-eks-cluster1 --region eu-west-2')
                             //sh "kubectl get ns"
                             sh "kubectl apply -f mygame-pod.yaml"
-                            sh "kubectl apply -f mygame-svc.yamll"
+                            sh "kubectl apply -f mygame-svc.yaml"
                                 
                     
                         }
